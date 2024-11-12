@@ -1,35 +1,18 @@
+// lib/views/card-widget.dart
 import 'package:flutter/material.dart';
-import '../models/card_data.dart';
+import '../models/character_data.dart';
 import 'detail_view.dart';
 
-class CardWidget extends StatefulWidget {
-  final CardData cardData;
+class CardWidget extends StatelessWidget {
+  final CharacterData characterData;
 
-  const CardWidget({Key? key, required this.cardData}) : super(key: key);
+  const CardWidget({Key? key, required this.characterData}) : super(key: key);
 
-  @override
-  _CardWidgetState createState() => _CardWidgetState();
-}
-
-class _CardWidgetState extends State<CardWidget> {
-  bool isLiked = false;
-
-  void _toggleLike() {
-    setState(() {
-      isLiked = !isLiked;
-    });
-
-    final snackBar = SnackBar(
-      content: Text(isLiked ? 'Добавлено в избранное' : 'Удалено из избранного'),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  void _navigateToDetail() {
+  void _navigateToDetail(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailView(cardData: widget.cardData),
+        builder: (context) => DetailView(characterData: characterData), // Убедитесь, что здесь передан characterData
       ),
     );
   }
@@ -37,25 +20,20 @@ class _CardWidgetState extends State<CardWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _navigateToDetail,
+      onTap: () => _navigateToDetail(context),
       child: Card(
         margin: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-            Image.network(widget.cardData.imageUrl),
+            characterData.image != null
+                ? Image.network(characterData.image!)
+                : Container(height: 100, color: Colors.grey),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                widget.cardData.title,
+                characterData.name,
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ),
-            IconButton(
-              icon: Icon(
-                isLiked ? Icons.favorite : Icons.favorite_border,
-                color: isLiked ? Colors.red : Colors.grey,
-              ),
-              onPressed: _toggleLike,
             ),
           ],
         ),
